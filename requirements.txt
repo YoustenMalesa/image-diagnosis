@@ -1,0 +1,15 @@
+# Core ML
+torch==2.3.0
+torchvision==0.18.0
+numpy==1.26.4
+Pillow==10.3.0
+scikit-learn==1.4.2
+
+# API
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+pydantic==2.7.1
+
+# Utils
+rich==13.7.1

@@ -1,0 +1,17 @@
+# Exclude large/local files from Docker build context
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.mypy_cache/
+.env
+venv/
+.env*/
+.ipynb_checkpoints/
+.git/
+.gitignore
+logs/
+# You may comment the next line to include data/ in the build context when build-time training is desired.
+# Keeping it included allows BuildKit binds to reference it without copying into layers.
+# data/
+# Optionally include models; trained model may be copied if present
+# models/

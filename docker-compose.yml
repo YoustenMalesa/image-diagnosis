@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TRAIN_IF_MISSING: "true"
+    image: skin-diagnosis:latest
+    environment:
+      DATA_DIR: /workspace/data
+      MODELS_DIR: /workspace/models
+      LOGS_DIR: /workspace/logs
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/workspace/models
+      - ./logs:/workspace/logs
+      - ./data:/workspace/data:ro
+    shm_size: "1gb"
+    ipc: host
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TRAIN_IF_MISSING: "false"
+    image: skin-diagnosis:latest
+    environment:
+      DATA_DIR: /workspace/data
+      MODELS_DIR: /workspace/models
+      LOGS_DIR: /workspace/logs
+      NUM_WORKERS: 0
+    volumes:
+      - ./models:/workspace/models
+      - ./logs:/workspace/logs
+      - ./data:/workspace/data:ro
+    shm_size: "1gb"
+    ipc: host
+    command: ["python", "-m", "src.train"]
