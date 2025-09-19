@@ -6,17 +6,20 @@ services:
       dockerfile: Dockerfile
       args:
         TRAIN_IF_MISSING: "true"
-    image: skin-diagnosis:latest
+    image: yousten/image-diagnosis-model:latest
+    container_name: image-diagnosis-model
     environment:
       DATA_DIR: /workspace/data
       MODELS_DIR: /workspace/models
       LOGS_DIR: /workspace/logs
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./models:/workspace/models
       - ./logs:/workspace/logs
       - ./data:/workspace/data:ro
+    networks:
+      - mobiclinic-net
     shm_size: "1gb"
     ipc: host
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
@@ -27,7 +30,8 @@ services:
       dockerfile: Dockerfile
       args:
         TRAIN_IF_MISSING: "false"
-    image: skin-diagnosis:latest
+    image: yousten/image-diagnosis-train:latest
+    container_name: image-diagnosis-model-train
     environment:
       DATA_DIR: /workspace/data
       MODELS_DIR: /workspace/models
@@ -37,6 +41,12 @@ services:
       - ./models:/workspace/models
       - ./logs:/workspace/logs
       - ./data:/workspace/data:ro
+    networks:
+      - mobiclinic-net
     shm_size: "1gb"
     ipc: host
     command: ["python", "-m", "src.train"]
+
+networks:
+  mobiclinic-net:
+    external: true

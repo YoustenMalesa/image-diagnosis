@@ -16,7 +16,7 @@ End-to-end training and inference for skin condition classification using a ResN
 1. Create a virtual environment and install dependencies:
 
 ```powershell
-python -m venv .venv; . .\.venv\Scripts\Activate.ps1; pip install --upgrade pip; pip install -r requirements.txt
+python -m venv .venv; . .\.venv\Scripts\Activate.ps1; pip install --upgrade pip; pip install -r requirements.txt  
 ```
 
 2. Train locally:
@@ -55,6 +55,8 @@ docker compose run --rm train
 
 ## API
 
+## Build and run: docker compose up -d --build 
+
 POST /predict (multipart/form-data)
 - file: image
 
@@ -74,3 +76,8 @@ Response:
 - Severity/Stage is derived from top-class probability with simple thresholds: <0.5 Low/Early, <0.75 Medium/Progressed, else High/Advanced. Adjust as needed.
 - For GPU training, switch to a CUDA base image and install appropriate PyTorch builds.
 - If classes are imbalanced, consider WeightedRandomSampler or class weights.
+
+## commands
+## Commands
+Build & Train: docker build -t image-diagnosis:latest .
+Run: docker run -d --name image-diagnosis-model --network mobiclinic-net -p 8001:8000 yousten/image-diagnosis-model:latest
