@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source (but not data thanks to .dockerignore)
 COPY src ./src
 COPY app ./app
-
+COPY data ./data
 # Create folders
 RUN mkdir -p /workspace/models /workspace/logs
 
@@ -25,6 +25,10 @@ RUN mkdir -p /workspace/models /workspace/logs
 # BuildKit mount lets us bind the dataset from build context at build-time without copying it into layers.
 ARG TRAIN_IF_MISSING=true
 ENV TRAIN_IF_MISSING=${TRAIN_IF_MISSING}
+
+# Optionally run tests after build/training. Controlled by build-arg RUN_TESTS (true/false)
+ARG RUN_TESTS=false
+ENV RUN_TESTS=${RUN_TESTS}
 
 # This step will be skipped if TRAIN_IF_MISSING=false or if a model already exists in models/
 # Note: Ensure BuildKit is enabled: DOCKER_BUILDKIT=1
@@ -39,6 +43,20 @@ RUN --mount=type=bind,source=data,target=/workspace/data,ro \
         fi; \
     else \
         echo "Skipping training during build."; \
+    fi'
+
+# If requested, and tests are provided via a bind mount, install testing deps and run pytest.
+# This is useful for CI or validation builds where you want tests to execute as part of the image build.
+RUN --mount=type=bind,source=tests,target=/workspace/tests,ro \
+    /bin/sh -lc 'set -e; \
+    if [ "${RUN_TESTS}" = "true" ] && [ -d /workspace/tests ]; then \
+        echo "Installing test dependencies..."; \
+        pip install --no-cache-dir pytest pytest-cov pytest-asyncio httpx; \
+        echo "Running test suite..."; \
+        # Fail fast and show concise output
+        python -m pytest /workspace/tests -q --maxfail=1; \
+    else \
+        echo "Skipping tests during build."; \
     fi'
 
 EXPOSE 8000

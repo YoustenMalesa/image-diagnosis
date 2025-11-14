@@ -79,5 +79,8 @@ Response:
 
 ## commands
 ## Commands
-Build & Train: docker build -t image-diagnosis:latest .
-Run: docker run -d --name image-diagnosis-model --network mobiclinic-net -p 8001:8000 yousten/image-diagnosis-model:latest
+Build & Train: docker build -t image-diagnosis-model:latest .
+Run: docker run -d --name image-diagnosis-model --network mobiclinic-net -p 8001:8000 image-diagnosis-model:latest
+
+## Test model
+docker build --progress=plain --build-arg TRAIN_IF_MISSING=true --build-arg RUN_TESTS=true -t img-diagnsis:train .
