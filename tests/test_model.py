@@ -1,4 +1,3 @@
-# tests/test_model.py
 import torch
 from src.model import build_model, save_checkpoint, load_checkpoint
 import tempfile
